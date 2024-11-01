@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-pod-probes
+spec:
+  rules:
+  - name: validate-probes
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    preconditions:
+      all:
+      - key: "{{request.operation || 'BACKGROUND'}}"
+        operator: AnyIn
+        value:
+        - CREATE
+        - UPDATE
+    validate:
+      failureAction: Enforce
+      message: "Liveness, readiness, or startup probes are required for all containers."
+      foreach:
+      - list: request.object.spec.containers[]
+        deny:
+          conditions:
+            all:
+            - key: livenessProbe
+              operator: AllNotIn
+              value: "{{ element.keys(@)[] }}"
+            - key: startupProbe
+              operator: AllNotIn
+              value: "{{ element.keys(@)[] }}"
+            - key: readinessProbe
+              operator: AllNotIn
+              value: "{{ element.keys(@)[] }}"

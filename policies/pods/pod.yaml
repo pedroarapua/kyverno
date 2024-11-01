@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-name
+  labels:
+    app: app-name
+spec:
+  containers:
+    - name: app-name
+      image: nginx:latest  # Você pode substituir pela imagem desejada
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          memory: "128Mi"   # Solicitação de memória
+          cpu: "250m"       # Solicitação de CPU
+        limits:
+          memory: "256Mi"   # Limite de memória
+          cpu: "500m"       # Limite de CPU
+      livenessProbe:
+        httpGet:
+          path: /      # Endpoint para verificação de liveness
+          port: 80
+        initialDelaySeconds: 30  # Tempo para aguardar antes da primeira verificação
+        periodSeconds: 10         # Frequência das verificações
+      readinessProbe:
+        httpGet:
+          path: /           # Endpoint para verificação de readiness
+          port: 80
+        initialDelaySeconds: 5    # Tempo para aguardar antes da primeira verificação
+        periodSeconds: 5           # Frequência das verificações

@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: read-only
+rules:
+- apiGroups: ["*"]        # Permite todos os grupos de API
+  resources: ["*"]        # Permite todos os recursos
+  verbs: ["get", "list", "watch"]  # Apenas operações de leitura
